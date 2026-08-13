@@ -91,7 +91,9 @@ Import-Csv .\windows_security.csv |
 
 ### 3.6 Baseline validation (ruling out a false positive)
 A `4672` (special privileges assigned) event was also observed for `jmiller`. This was assessed and determined to be **legitimate**: it originated from the internal IP `10.10.5.22`, workstation `HR-PC-07`, at 09:12 during business hours — consistent with normal administrative activity. It is **not** part of this incident. (Distinguishing malicious privilege use from routine admin activity by source, host, and timing.)
+
 <img width="482" height="370" alt="image" src="https://github.com/user-attachments/assets/c1511658-9c9c-41d1-beac-914aa7c0f0c1" />
+
 <img width="446" height="367" alt="image" src="https://github.com/user-attachments/assets/2408d1b1-68a2-4102-a28b-9352705aa49c" />
 
 ### 3.7 Post-compromise activity
