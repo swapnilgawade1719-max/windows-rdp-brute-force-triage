@@ -49,6 +49,8 @@ A separate privileged logon by `jmiller` was reviewed and assessed as **legitima
 (Import-Csv .\windows_security.csv | Where-Object EventID -eq '4625').Count
 ```
 **Result: 46 failed logons (Event ID 4625).**
+<img width="940" height="43" alt="image" src="https://github.com/user-attachments/assets/f9c6c90d-d484-4fa6-8197-b488895aae35" />
+
 
 ### 3.2 Source of the attack
 ```powershell
@@ -56,6 +58,7 @@ Import-Csv .\windows_security.csv | Where-Object EventID -eq '4625' |
   Group-Object IpAddress | Sort-Object Count -Descending | Select-Object Count, Name
 ```
 **Result: all 46 failures originated from a single external IP, `45.134.26.13`.**
+<img width="940" height="100" alt="image" src="https://github.com/user-attachments/assets/e3027eeb-4af3-4765-9bf4-296aa9046e19" />
 
 ### 3.3 Targeted accounts
 ```powershell
@@ -63,6 +66,7 @@ Import-Csv .\windows_security.csv | Where-Object EventID -eq '4625' |
   Group-Object TargetUserName | Sort-Object Count -Descending | Select-Object Count, Name
 ```
 **Result: 38 attempts against `Administrator`, 8 spread across invalid usernames.** The concentration on `Administrator` shows the attacker located a valid, high-value account.
+<img width="940" height="232" alt="image" src="https://github.com/user-attachments/assets/9c397278-5d3f-4baf-890b-aa64dd67d954" />
 
 ### 3.4 Failure reason (SubStatus)
 ```powershell
@@ -73,6 +77,8 @@ Import-Csv .\windows_security.csv | Where-Object EventID -eq '4625' |
 - `0xC000006A` (valid username, wrong password) — **38 attempts** against `Administrator`. The attacker knew this account exists and was guessing its password.
 - `0xC0000064` (username does not exist) — 8 attempts. The attacker was probing for other valid accounts.
 
+<img width="940" height="164" alt="image" src="https://github.com/user-attachments/assets/175cd643-883d-4b17-bab3-ea5404cb2a45" />
+
 This split is the key insight: the attacker moved from *guessing account names* to *guessing the password of a confirmed real account*.
 
 ### 3.5 The pivot — successful logon
@@ -81,9 +87,12 @@ Import-Csv .\windows_security.csv |
   Where-Object { $_.EventID -eq '4624' -and $_.IpAddress -eq '45.134.26.13' }
 ```
 **Result: a successful logon (4624) for `Administrator` from `45.134.26.13` at 02:15:31, Logon Type 10 (RDP).** The brute force succeeded.
+<img width="940" height="333" alt="image" src="https://github.com/user-attachments/assets/7bc77ea9-ac9c-4693-8a0c-3acc8345fe69" />
 
 ### 3.6 Baseline validation (ruling out a false positive)
 A `4672` (special privileges assigned) event was also observed for `jmiller`. This was assessed and determined to be **legitimate**: it originated from the internal IP `10.10.5.22`, workstation `HR-PC-07`, at 09:12 during business hours — consistent with normal administrative activity. It is **not** part of this incident. (Distinguishing malicious privilege use from routine admin activity by source, host, and timing.)
+<img width="482" height="370" alt="image" src="https://github.com/user-attachments/assets/c1511658-9c9c-41d1-beac-914aa7c0f0c1" />
+<img width="446" height="367" alt="image" src="https://github.com/user-attachments/assets/2408d1b1-68a2-4102-a28b-9352705aa49c" />
 
 ### 3.7 Post-compromise activity
 ```powershell
@@ -96,6 +105,7 @@ Import-Csv .\windows_security.csv |
 - **4732** — added `helpdesk_svc` to the local **Administrators** group,
 - **4724** — set the backdoor's password,
 - **1102** — **cleared the Windows Security event log** to impede investigation.
+<img width="482" height="370" alt="image" src="https://github.com/user-attachments/assets/929223cf-eda4-413d-81be-ab740baebea2" />
 
 ---
 
