@@ -40,4 +40,4 @@ A Windows server (`WIN-SRV01`) with RDP exposed on port 3389 is targeted by an e
 | `windows_security.csv` | The Windows Security event dataset analyzed |
 | `images/` | Investigation screenshots |
 
-**➡️ Read the full investigation in [INCIDENT_REPORT.md](INCIDENT_REPORT.md).**
+**➡️ Read the full investigation in [INCIDENT_REPORT.md](INCIDENT_REPORT_Lab2.md).**
